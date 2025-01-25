@@ -1,4 +1,3 @@
-
 #include <limits>
 #include <atomic>
 #include <string>
@@ -31,7 +30,7 @@
 #include <dynamic_reconfigure/client.h>
 #include "costmap_2d/InflationPluginConfig.h"
 #include "costmap_2d/VoxelPluginConfig.h"
-#include "dwa_local_planner/DWAPlannerConfig.h"
+//#include "trajectory_planner/TrajectoryPlannerConfig.h" 
 
 namespace {
     static std::atomic_bool recived_waypoint, is_fst_flag, is_reconfigure;
@@ -39,15 +38,15 @@ namespace {
     static float current_goal_radius = default_goal_radius;
     static Eigen::Vector2f current_position = Eigen::Vector2f::Zero();
     static std::string old_id, file_path_, start_id, end_id, area_name;
-    static float default_global_inflation, default_local_inflation, default_dwa_limit_vel;
+    static float default_global_inflation, default_local_inflation, default_trajectory_limit_vel;
     static YAML::Node yaml_config;
-    static float global_inflation, local_inflation, dwa_limit_vel;
+    static float global_inflation, local_inflation, trajectory_limit_vel;
 }
 
 void change_global_inflation_param(const std::string& param_name, double value);
 void change_local_inflation_param(const std::string& param_name, double value);
 void change_local_cost_cloud_param(const std::string& param_name, bool value);
-void change_dwa_param(const std::string& param_name, double value);
+void change_trajectory_param(const std::string& param_name, double value);  // TrajectoryPlanner用のパラメータ変更関数
 
 void waypointCallback(const waypoint_manager_msgs::Waypoint::ConstPtr &msg) {
     try {
@@ -84,9 +83,9 @@ void waypointCallback(const waypoint_manager_msgs::Waypoint::ConstPtr &msg) {
                             change_local_cost_cloud_param("enabled", true);
                         }
 
-                        if (p["key"].as<std::string>() == "dwa_limit_vel") {
-                            change_dwa_param("max_vel_x", default_dwa_limit_vel);
-                            change_dwa_param("max_vel_trans", default_dwa_limit_vel);
+                        if (p["key"].as<std::string>() == "trajectory_limit_vel") {  // TrajectoryPlanner用のパラメータ
+                            change_trajectory_param("max_vel_x", default_trajectory_limit_vel);
+                            //change_trajectory_param("max_vel_theta", default_trajectory_limit_vel);
                         }
                     }
                     is_reconfigure.store(false);
@@ -113,16 +112,14 @@ void waypointCallback(const waypoint_manager_msgs::Waypoint::ConstPtr &msg) {
                         }
 
                         if (p["key"].as<std::string>() == "local_cost_cloud") {
-                            // local_cost_cloud = p["value"].as<bool>();
-                            // ROS_WARN("Set local_cost_cloud %f", local_inflation);
                             change_local_cost_cloud_param("enabled", false);
                         }
 
-                        if (p["key"].as<std::string>() == "dwa_limit_vel") {
-                            dwa_limit_vel = p["value"].as<float>();
-                            ROS_WARN("Set dwa_limit_vel %f", dwa_limit_vel);
-                            change_dwa_param("max_vel_x", dwa_limit_vel);
-                            change_dwa_param("max_vel_trans", dwa_limit_vel);
+                        if (p["key"].as<std::string>() == "trajectory_limit_vel") {  // TrajectoryPlanner用のパラメータ
+                            trajectory_limit_vel = p["value"].as<float>();
+                            ROS_WARN("Set trajectory_limit_vel %f", trajectory_limit_vel);
+                            change_trajectory_param("max_vel_x", trajectory_limit_vel);
+                            //change_trajectory_param("max_vel_theta", trajectory_limit_vel);
                         }
                     }
                 }
@@ -149,7 +146,7 @@ void readYaml(ros::NodeHandle& private_nh) {
 
         default_global_inflation = yaml_config["waypoint_reconfigure_config"]["default_global_inflation"].as<float>();
         default_local_inflation = yaml_config["waypoint_reconfigure_config"]["default_local_inflation"].as<float>();
-        default_dwa_limit_vel = yaml_config["waypoint_reconfigure_config"]["default_dwa_limit_vel"].as<float>();
+        default_trajectory_limit_vel = yaml_config["waypoint_reconfigure_config"]["default_trajectory_limit_vel"].as<float>();
     }
     catch(const std::exception& e)
     {
@@ -202,7 +199,7 @@ void change_local_cost_cloud_param(const std::string& param_name, bool value) {
     ros::service::call("/move_base/local_costmap/local_cost_cloud_layer/set_parameters", srv_req, srv_resp);
 }
 
-void change_dwa_param(const std::string& param_name, double value) {
+void change_trajectory_param(const std::string& param_name, double value) {
     dynamic_reconfigure::ReconfigureRequest srv_req;
     dynamic_reconfigure::ReconfigureResponse srv_resp;
     dynamic_reconfigure::DoubleParameter double_param;
@@ -214,7 +211,7 @@ void change_dwa_param(const std::string& param_name, double value) {
 
     srv_req.config = config;
 
-    ros::service::call("/move_base/DWAPlannerROS/set_parameters", srv_req, srv_resp);
+    ros::service::call("/move_base/TrajectoryPlannerROS/set_parameters", srv_req, srv_resp);  // TrajectoryPlanner用
 }
 
 auto main(int argc, char **argv) -> int {
@@ -294,4 +291,5 @@ auto main(int argc, char **argv) -> int {
 
     return 0;
 }
+
 
