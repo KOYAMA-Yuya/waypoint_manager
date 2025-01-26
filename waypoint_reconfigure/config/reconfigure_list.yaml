@@ -9,15 +9,15 @@ waypoint_reconfigure_config:
 
   areas:
     - name: "test"
-      start_id: registed_0_1706866205977639192
-      end_id: registed_0_1706866223948252276
+      start_id: registed_0_1654678923563628537
+      end_id: registed_0_1654679322742326305
       properties:
         - key: global_inflation
-          value: 0
+          value: 0.4
         - key: local_inflation
           value: 0
 #        - key: trajectory_param
  #         value: 0
         - key: trajectory_limit_vel
-          value: 0
+          value: 0.3
 
