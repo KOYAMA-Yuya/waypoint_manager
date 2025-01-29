@@ -11,8 +11,8 @@ waypoint_reconfigure_config:
 
   areas:
     - name: "test"
-      start_id: registed_0_1654677517844426346
-      end_id: registed_0_1706866215795912497
+      start_id: registed_0_1654678923563628537
+      end_id: registed_0_1654679339324142985
       properties:
         - key: global_inflation
           value: 0.7

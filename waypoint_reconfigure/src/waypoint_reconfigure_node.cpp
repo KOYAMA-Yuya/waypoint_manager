@@ -88,6 +88,7 @@ void waypointCallback(const waypoint_manager_msgs::Waypoint::ConstPtr &msg) {
                         }
                         if (p["key"].as<std::string>() == "trajectory_limit_theta") {  // TrajectoryPlanner用のパラメータ
                             change_trajectory_param("max_vel_theta", default_trajectory_limit_theta);
+                            change_trajectory_param("min_vel_theta", default_trajectory_limit_theta * -1.0);
                         }
                     }
                     is_reconfigure.store(false);
@@ -126,6 +127,7 @@ void waypointCallback(const waypoint_manager_msgs::Waypoint::ConstPtr &msg) {
                             trajectory_limit_theta = p["value"].as<float>();
                             ROS_WARN("Set trajectory_limit_theta %f", trajectory_limit_theta);
                             change_trajectory_param("max_vel_theta", trajectory_limit_theta);
+                            change_trajectory_param("min_vel_theta", trajectory_limit_theta * -1.0);
                         }
                     }
                 }
