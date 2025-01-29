@@ -38,9 +38,9 @@ namespace {
     static float current_goal_radius = default_goal_radius;
     static Eigen::Vector2f current_position = Eigen::Vector2f::Zero();
     static std::string old_id, file_path_, start_id, end_id, area_name;
-    static float default_global_inflation, default_local_inflation, default_trajectory_limit_vel;
+    static float default_global_inflation, default_local_inflation, default_trajectory_limit_vel, default_trajectory_limit_theta;
     static YAML::Node yaml_config;
-    static float global_inflation, local_inflation, trajectory_limit_vel;
+    static float global_inflation, local_inflation, trajectory_limit_vel, trajectory_limit_theta;
 }
 
 void change_global_inflation_param(const std::string& param_name, double value);
@@ -85,7 +85,9 @@ void waypointCallback(const waypoint_manager_msgs::Waypoint::ConstPtr &msg) {
 
                         if (p["key"].as<std::string>() == "trajectory_limit_vel") {  // TrajectoryPlanner用のパラメータ
                             change_trajectory_param("max_vel_x", default_trajectory_limit_vel);
-                            //change_trajectory_param("max_vel_theta", default_trajectory_limit_vel);
+                        }
+                        if (p["key"].as<std::string>() == "trajectory_limit_theta") {  // TrajectoryPlanner用のパラメータ
+                            change_trajectory_param("max_vel_theta", default_trajectory_limit_theta);
                         }
                     }
                     is_reconfigure.store(false);
@@ -119,7 +121,11 @@ void waypointCallback(const waypoint_manager_msgs::Waypoint::ConstPtr &msg) {
                             trajectory_limit_vel = p["value"].as<float>();
                             ROS_WARN("Set trajectory_limit_vel %f", trajectory_limit_vel);
                             change_trajectory_param("max_vel_x", trajectory_limit_vel);
-                            //change_trajectory_param("max_vel_theta", trajectory_limit_vel);
+                        }
+                        if (p["key"].as<std::string>() == "trajectory_limit_theta") {  // TrajectoryPlanner用のパラメータ
+                            trajectory_limit_theta = p["value"].as<float>();
+                            ROS_WARN("Set trajectory_limit_theta %f", trajectory_limit_theta);
+                            change_trajectory_param("max_vel_theta", trajectory_limit_theta);
                         }
                     }
                 }
@@ -147,6 +153,7 @@ void readYaml(ros::NodeHandle& private_nh) {
         default_global_inflation = yaml_config["waypoint_reconfigure_config"]["default_global_inflation"].as<float>();
         default_local_inflation = yaml_config["waypoint_reconfigure_config"]["default_local_inflation"].as<float>();
         default_trajectory_limit_vel = yaml_config["waypoint_reconfigure_config"]["default_trajectory_limit_vel"].as<float>();
+        default_trajectory_limit_theta = yaml_config["waypoint_reconfigure_config"]["default_trajectory_limit_theta"].as<float>();
     }
     catch(const std::exception& e)
     {
