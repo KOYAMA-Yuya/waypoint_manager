@@ -17,7 +17,7 @@ waypoint_reconfigure_config:
         - key: global_inflation
           value: 0.7
         - key: local_inflation
-          value: 0
+          value: 0.2
 #        - key: trajectory_param
  #         value: 0
         - key: trajectory_limit_vel
