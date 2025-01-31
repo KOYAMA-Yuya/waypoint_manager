@@ -7,7 +7,7 @@
   <arg name="reconfig_file" default="$(find waypoint_reconfigure)/config/reconfigure_list.yaml"/>
 
   <arg name="use_check_robot_moving" default="false"/>
-  <arg name="use_waypoint_reconfigure" default="false"/>
+  <arg name="use_waypoint_reconfigure" default="true"/>
 
   <group ns="waypoint_manager">
     <node pkg="waypoint_server" type="waypoint_server_node" name="waypoint_server" output="$(arg output)">
