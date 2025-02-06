@@ -15,13 +15,13 @@ waypoint_reconfigure_config:
       end_id: registed_0_1654679091386560710
       properties:
         - key: global_inflation
-          value: 0.9
+          value: 7
         - key: local_inflation
           value: 0.2
         - key: trajectory_limit_vel
           value: 0.3
         - key: trajectory_limit_theta
-          value: 0.3
+          value: 1
     - name: "illumination_Square"
       start_id: registed_0_1654679109649270723
       end_id: registed_0_1654679339324142985
