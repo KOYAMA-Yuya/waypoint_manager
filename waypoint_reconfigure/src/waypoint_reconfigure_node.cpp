@@ -205,7 +205,9 @@ void change_local_cost_cloud_param(const std::string& param_name, bool value) {
 
     srv_req.config = config;
 
-    ros::service::call("/move_base/local_costmap/local_cost_cloud_layer/set_parameters", srv_req, srv_resp);
+    //ros::service::call("/move_base/local_costmap/local_cost_cloud_layer/set_parameters", srv_req, srv_resp);
+    ros::service::call("/move_base/local_costmap/obstacle_layer/set_parameters", srv_req, srv_resp);
+    ros::service::call("/move_base/global_costmap/obstacle_layer/set_parameters", srv_req, srv_resp);
 }
 
 void change_trajectory_param(const std::string& param_name, double value) {
